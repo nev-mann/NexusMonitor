@@ -1,6 +1,22 @@
 @NexusMonitor.Api_HostAddress = http://localhost:5210
 
-GET {{NexusMonitor.Api_HostAddress}}/weatherforecast/
+GET {{NexusMonitor.Api_HostAddress}}/api/device/
 Accept: application/json
 
 ###
+
+GET {{NexusMonitor.Api_HostAddress}}/api/device/2
+Accept: application/json
+
+###
+
+GET {{NexusMonitor.Api_HostAddress}}/api/device?DeviceID=E6SD1Y6PW7Y6
+Accept: application/json
+
+
+### Dodaj (POST)
+POST {{NexusMonitor.Api_HostAddress}}/api/device
+Content-Type: application/json
+{
+  "DeviceName": "Bohemian Rhapsody"
+}
