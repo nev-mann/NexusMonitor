@@ -3,14 +3,14 @@
 GET {{NexusMonitor.Api_HostAddress}}/api/device/
 Accept: application/json
 
-###
+### GET, argument jako liczba (int), 
 
-GET {{NexusMonitor.Api_HostAddress}}/api/device/2
+GET {{NexusMonitor.Api_HostAddress}}/api/device/1
 Accept: application/json
 
-###
+### GET, argument jako tekst 
 
-GET {{NexusMonitor.Api_HostAddress}}/api/device?DeviceID=E6SD1Y6PW7Y6
+GET {{NexusMonitor.Api_HostAddress}}/api/device?DeviceName=Device%202
 Accept: application/json
 
 
@@ -18,5 +18,15 @@ Accept: application/json
 POST {{NexusMonitor.Api_HostAddress}}/api/device
 Content-Type: application/json
 {
-  "DeviceName": "Bohemian Rhapsody"
+  "DeviceName": "Nowe"
 }
+
+### Zaktualizuj (PUT)
+PUT {{NexusMonitor.Api_HostAddress}}/api/device/1
+Content-Type: application/json
+{
+  "DeviceName": "Name zmienione"
+}
+
+### Usuñ (DELETE)
+DELETE {{NexusMonitor.Api_HostAddress}}/api/device/1

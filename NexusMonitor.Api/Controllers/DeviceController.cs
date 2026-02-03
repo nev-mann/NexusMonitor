@@ -10,76 +10,49 @@ namespace NexusMonitor.Api.Controllers
     {
         private static readonly List<Device> _devices = new()
         {
-            new Device { DeviceId = "1", DeviceName = "Device 1", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
-            new Device { DeviceId = "2", DeviceName = "Device 2", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
-            new Device { DeviceId = "3", DeviceName = "Device 3", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) }
+            new Device { DeviceId = 1, DeviceName = "Device 1", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
+            new Device { DeviceId = 2, DeviceName = "Device 2", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
+            new Device { DeviceId = 3, DeviceName = "Device 3", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) }
         };
 
-        // /api/device/
-
-        /*
-        [HttpGet]
-        public ActionResult<List<Device>> GetAll()
-        {
-            return Ok(_devices);
-        }
-        */
-
         // /api/device/1
-        [HttpGet("{id}")]
-        public ActionResult<Device> GetById(int DeviceId)
+        [HttpGet("{deviceId}")]
+        public ActionResult<Device> GetById(int deviceId)
         {
-            return Ok(_devices[0]);
+            var device = _devices.FirstOrDefault(s => s.DeviceId == deviceId);
+            return device == null ? NotFound() : Ok(device);
         }
 
-        // /api/device?DeviceID=1
-
+        // /api/device?DeviceName=Device%201  lub  /api/device/
         [HttpGet]
-        public ActionResult<Device> GetAll([FromQuery] string? DeviceId)
+        public ActionResult GetAllOrByName ([FromQuery] string? deviceName)
         {
-            var device = _devices.FirstOrDefault(s => s.DeviceId == DeviceId);
-
-            if (device == null)
+            if (string.IsNullOrEmpty(deviceName))
             {
-                return NotFound();
+                return Ok(_devices);
             }
 
-            return Ok(device);
+            var device = _devices.FirstOrDefault(s => s.DeviceName == deviceName);
+            return device == null ? NotFound() : Ok(device);
         }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(string? id, [FromBody] Device updatedDevice)
-        {
-            var existingDevice = _devices.FirstOrDefault(s => s.DeviceId == id);
-
-            if (existingDevice == null)
-            {
-                return NotFound();
-            }
-
-            // 3. Aktualizacja pól
-            // (Uwaga: ID w URL musi się zgadzać z ID obiektu, lub ignorujemy ID z body)
-            existingDevice.DeviceName = updatedDevice.DeviceName;
-
-            // 4. Zwracamy 204 No Content
-            // Oznacza to: "Zrobione, nie muszę Ci odsyłać obiektu, który właśnie wysłałeś"
-            return NoContent();
-        }
-
 
         // 
 
         [HttpPost]
-        public IActionResult Create([FromBody] Device device)
+        public IActionResult Create([FromBody] CreateDeviceDto deviceDto)
         {
-            string newId = RandomString(12);
-            device.DeviceId = newId;
+            var device = new Device
+            {
+                DeviceId = _devices.Any() ? _devices.Max(d => d.DeviceId) + 1 : 1,
+                DeviceName = deviceDto.DeviceName,
+                SecretKey = RandomString(12)
+            };
 
             _devices.Add(device);
 
             // Zwrócenie kodu 201 Created wraz z nagłówkiem Location
             // nameof(GetById) wskazuje na metodę, która pozwala pobrać ten konkretny zasób
-            return CreatedAtAction(nameof(GetById), new { id = device.DeviceId }, device);
+            return CreatedAtAction(nameof(GetById), new { deviceId = device.DeviceId }, device);
         }
 
         private static Random random = new Random();
@@ -89,6 +62,39 @@ namespace NexusMonitor.Api.Controllers
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
-        } 
+        }
+
+        //
+
+        [HttpPut("{deviceId}")]
+        public IActionResult Update(int deviceId, [FromBody] CreateDeviceDto updatedDeviceDto)
+        {
+            var existingDevice = _devices.FirstOrDefault(s => s.DeviceId == deviceId);
+
+            if (existingDevice == null)
+            {
+                return NotFound();
+            }
+
+            existingDevice.DeviceName = updatedDeviceDto.DeviceName;
+
+            return NoContent();
+        }
+        //
+
+        [HttpDelete("{deviceId}")]
+        public IActionResult Delete(int deviceId)
+        {
+            var device = _devices.FirstOrDefault(s => s.DeviceId == deviceId);
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            _devices.Remove(device);
+
+            return NoContent();
+        }
     }
 }
