@@ -57,11 +57,15 @@ namespace NexusMonitor.Api.Controllers
                 return NotFound();
             }
 
+            // 3. Aktualizacja pól
             // (Uwaga: ID w URL musi się zgadzać z ID obiektu, lub ignorujemy ID z body)
             existingDevice.DeviceName = updatedDevice.DeviceName;
 
+            // 4. Zwracamy 204 No Content
+            // Oznacza to: "Zrobione, nie muszę Ci odsyłać obiektu, który właśnie wysłałeś"
             return NoContent();
         }
+
 
         // 
 
@@ -85,6 +89,6 @@ namespace NexusMonitor.Api.Controllers
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
+        } 
     }
 }
