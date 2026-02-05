@@ -1,0 +1,14 @@
+services:
+  nexus-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: nexus-sql-server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+volumes:
+  sql_data:
