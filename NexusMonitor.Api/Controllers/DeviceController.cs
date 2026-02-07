@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore; // To daje dostęp do ToListAsync, FindAsync itd.
+using NexusMonitor.Api.Data;       // To daje dostęp do AppDbContext
 
 namespace NexusMonitor.Api.Controllers
 {
@@ -8,6 +10,14 @@ namespace NexusMonitor.Api.Controllers
     [Route("api/[controller]")]
     public class DeviceController : ControllerBase
     {
+        private readonly AppDbContext _context;
+        public DeviceController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+
+        // Tymczasowa lista urządzeń, zastąpić później bazą danych
         private static readonly List<Device> _devices = new()
         {
             new Device { DeviceId = 1, DeviceName = "Device 1", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
@@ -17,38 +27,42 @@ namespace NexusMonitor.Api.Controllers
 
         // /api/device/1
         [HttpGet("{deviceId}")]
-        public ActionResult<Device> GetById(int deviceId)
+        public async Task<ActionResult<Device>> GetById(int deviceId)
         {
-            var device = _devices.FirstOrDefault(s => s.DeviceId == deviceId);
+            var device = await _context.Devices.FindAsync(deviceId);
             return device == null ? NotFound() : Ok(device);
         }
 
         // /api/device?DeviceName=Device%201  lub  /api/device/
         [HttpGet]
-        public ActionResult GetAllOrByName ([FromQuery] string? deviceName)
+        public async Task<ActionResult> GetAllOrByName ([FromQuery] string? deviceName)
         {
-            if (string.IsNullOrEmpty(deviceName))
+            var query = _context.Devices.AsQueryable();
+
+            if (!string.IsNullOrEmpty(deviceName))
             {
-                return Ok(_devices);
+                query = query.Where(s => s.DeviceName.Contains(deviceName));
             }
 
-            var device = _devices.FirstOrDefault(s => s.DeviceName == deviceName);
-            return device == null ? NotFound() : Ok(device);
+            var devices = await query.ToListAsync();
+
+            return devices == null ? NotFound() : Ok(devices);
         }
 
         // 
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateDeviceDto deviceDto)
+        public async Task<IActionResult> Create([FromBody] CreateDeviceDto deviceDto)
         {
             var device = new Device
             {
-                DeviceId = _devices.Any() ? _devices.Max(d => d.DeviceId) + 1 : 1,
                 DeviceName = deviceDto.DeviceName,
                 SecretKey = RandomString(12)
             };
 
-            _devices.Add(device);
+            _context.Devices.Add(device);
+
+            await _context.SaveChangesAsync();
 
             // Zwrócenie kodu 201 Created wraz z nagłówkiem Location
             // nameof(GetById) wskazuje na metodę, która pozwala pobrać ten konkretny zasób
@@ -67,9 +81,9 @@ namespace NexusMonitor.Api.Controllers
         //
 
         [HttpPut("{deviceId}")]
-        public IActionResult Update(int deviceId, [FromBody] CreateDeviceDto updatedDeviceDto)
+        public async Task<IActionResult> Update(int deviceId, [FromBody] CreateDeviceDto updatedDeviceDto)
         {
-            var existingDevice = _devices.FirstOrDefault(s => s.DeviceId == deviceId);
+            var existingDevice = await _context.Devices.FindAsync(deviceId);
 
             if (existingDevice == null)
             {
@@ -78,21 +92,25 @@ namespace NexusMonitor.Api.Controllers
 
             existingDevice.DeviceName = updatedDeviceDto.DeviceName;
 
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
         //
 
         [HttpDelete("{deviceId}")]
-        public IActionResult Delete(int deviceId)
+        public async Task<IActionResult> Delete(int deviceId)
         {
-            var device = _devices.FirstOrDefault(s => s.DeviceId == deviceId);
+            var device = await _context.Devices.FindAsync(deviceId);
 
             if (device == null)
             {
                 return NotFound();
             }
 
-            _devices.Remove(device);
+            _context.Devices.Remove(device);
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

@@ -21,7 +21,7 @@ namespace NexusMonitor.Api
     }
     public class Device
     {
-        public required int DeviceId { get; set; }
+        public int DeviceId { get; set; }
         public string? DeviceName { get; set; }
         public string? SecretKey { get; set; }
         public DateOnly DateRegistered { get; set; }
