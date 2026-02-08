@@ -18,14 +18,18 @@ Accept: application/json
 POST {{NexusMonitor.Api_HostAddress}}/api/device
 Content-Type: application/json
 {
-  "DeviceName": "Nowe3"
+  "DeviceName": "Nowe3",
+  "HighThreshold": 123.12,
+  "DeviceType":"asd"
 }
 
 ### Zaktualizuj (PUT)
-PUT {{NexusMonitor.Api_HostAddress}}/api/device/1
+PUT {{NexusMonitor.Api_HostAddress}}/api/device/2
 Content-Type: application/json
 {
-  "DeviceName": "Name zmienione"
+  "DeviceName": "TestMapping",
+  "HighThreshold": 123.12,
+  "DeviceType":"asd"
 }
 
 ### Usuñ (DELETE)

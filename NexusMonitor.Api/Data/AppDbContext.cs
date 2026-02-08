@@ -9,5 +9,9 @@ namespace NexusMonitor.Api.Data
         }
 
         public DbSet<Device> Devices { get; set; }
+
+        public DbSet<UserAccount> UserAccounts { get; set; }
+
+        public DbSet<Measurement> Measurements { get; set; }
     }
 }

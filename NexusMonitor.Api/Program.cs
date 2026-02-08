@@ -9,6 +9,8 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Rejestracja AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Obs³uga bazy danych
 builder.Services.AddDbContext<AppDbContext>(options =>

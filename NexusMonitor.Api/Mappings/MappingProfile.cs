@@ -1,0 +1,23 @@
+﻿using AutoMapper;
+using NexusMonitor.Api.Dtos;
+
+namespace NexusMonitor.Api.Mappings
+{
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            // Zapis
+            CreateMap<CreateDeviceDto, Device>();
+            // Odczyt
+            CreateMap<Device, CreateDeviceDto>();
+
+            CreateMap<CreateMeasurementDto, Measurement>();
+            CreateMap<Measurement, CreateMeasurementDto>();
+
+            CreateMap<RegisterUserDto, UserAccount>();
+
+            CreateMap<UpdateDeviceDto, Device>();
+        }
+    }
+}

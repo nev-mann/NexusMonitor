@@ -1,23 +1,15 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NexusMonitor.Api
-{
-    public record RegisterUserDto(
-        [Required][EmailAddress] string Email,
-        [Required][MinLength(3)] string Username,
-        [Required][MinLength(8)] string Password
-    );
+{    
     public class UserAccount
     {
-        public required Guid UserId { get; set; }
+        public int UserAccountId { get; set; }
         public required string? Username { get; set; }
         public required string? Email { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public List<Device>? Devices { get; set; } = [];
-    }
-    public class CreateDeviceDto
-    {
-        [Required] public string? DeviceName { get; set; }
     }
     public class Device
     {
@@ -25,14 +17,22 @@ namespace NexusMonitor.Api
         public string? DeviceName { get; set; }
         public string? SecretKey { get; set; }
         public DateOnly DateRegistered { get; set; }
+        public List<Measurement>? Measurements { get; set; } = [];
+        public string? MeasurementsUnit { get; set; }
+        public string? DeviceType { get; set; }
+        public float HighThreshold { get; set; }
+        public float LowThreshold { get; set; }
+
     }
 
     public class Measurement    
     {
         public int MeasurementId { get; set; }
-        public required string? DeviceId { get; set; }
+        public int DeviceId { get; set; }
+        [ForeignKey("DeviceId")]
+        public Device Device{ get; set; } = null!;
         public DateTime Timestamp { get; set; }
-        public double Value { get; set; }
+        public float Value { get; set; }
     }
 
 }

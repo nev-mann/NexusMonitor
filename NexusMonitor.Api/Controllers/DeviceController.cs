@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; // To daje dostęp do ToListAsync, FindAsync itd.
-using NexusMonitor.Api.Data;       // To daje dostęp do AppDbContext
+using NexusMonitor.Api.Data;  // To daje dostęp do AppDbContext
+using NexusMonitor.Api.Dtos;       
 
 namespace NexusMonitor.Api.Controllers
 {
@@ -11,11 +13,14 @@ namespace NexusMonitor.Api.Controllers
     public class DeviceController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public DeviceController(AppDbContext context)
+        private readonly IMapper _mapper;
+        private static Random random = new Random();
+
+        public DeviceController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-
 
         // Tymczasowa lista urządzeń, zastąpić później bazą danych
         private static readonly List<Device> _devices = new()
@@ -41,7 +46,7 @@ namespace NexusMonitor.Api.Controllers
 
             if (!string.IsNullOrEmpty(deviceName))
             {
-                query = query.Where(s => s.DeviceName.Contains(deviceName));
+                query = query.Where(s => s.DeviceName != null && s.DeviceName.Contains(deviceName));
             }
 
             var devices = await query.ToListAsync();
@@ -54,11 +59,7 @@ namespace NexusMonitor.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateDeviceDto deviceDto)
         {
-            var device = new Device
-            {
-                DeviceName = deviceDto.DeviceName,
-                SecretKey = RandomString(12)
-            };
+            var device = _mapper.Map<Device>(deviceDto);
 
             _context.Devices.Add(device);
 
@@ -69,8 +70,6 @@ namespace NexusMonitor.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { deviceId = device.DeviceId }, device);
         }
 
-        private static Random random = new Random();
-
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -78,10 +77,8 @@ namespace NexusMonitor.Api.Controllers
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        //
-
         [HttpPut("{deviceId}")]
-        public async Task<IActionResult> Update(int deviceId, [FromBody] CreateDeviceDto updatedDeviceDto)
+        public async Task<IActionResult> Update(int deviceId, [FromBody] UpdateDeviceDto updatedDeviceDto)
         {
             var existingDevice = await _context.Devices.FindAsync(deviceId);
 
@@ -90,13 +87,12 @@ namespace NexusMonitor.Api.Controllers
                 return NotFound();
             }
 
-            existingDevice.DeviceName = updatedDeviceDto.DeviceName;
+            _mapper.Map(updatedDeviceDto, existingDevice);
 
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-        //
 
         [HttpDelete("{deviceId}")]
         public async Task<IActionResult> Delete(int deviceId)
