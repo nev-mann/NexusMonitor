@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; // To daje dostęp do ToListAsync, FindAsync itd.
 using NexusMonitor.Api.Data;  // To daje dostęp do AppDbContext
-using NexusMonitor.Api.Dtos;     
+using NexusMonitor.Api.Models;
 
 namespace NexusMonitor.Api.Controllers
 {
@@ -124,6 +124,12 @@ namespace NexusMonitor.Api.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("server-error")]
+        public ActionResult<string> GetServerError()
+        {
+            throw new Exception("To jest testowy wyjątek middleware!");
         }
     }
 }

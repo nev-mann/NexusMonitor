@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using NexusMonitor.Api.Dtos;
+using NexusMonitor.Api.Models;
 
 namespace NexusMonitor.Api.Mappings
 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NexusMonitor.Api.Models;
 
 namespace NexusMonitor.Api.Data
 {

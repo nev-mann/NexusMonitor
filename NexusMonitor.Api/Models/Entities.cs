@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace NexusMonitor.Api
+namespace NexusMonitor.Api.Models
 {    
     public class UserAccount
     {

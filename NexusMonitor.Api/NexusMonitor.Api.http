@@ -34,3 +34,7 @@ Content-Type: application/json
 
 ### Usuñ (DELETE)
 DELETE {{NexusMonitor.Api_HostAddress}}/api/device/1
+
+
+### Test Error Throw
+GET {{NexusMonitor.Api_HostAddress}}/api/device/server-error/

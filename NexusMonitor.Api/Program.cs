@@ -20,6 +20,8 @@ builder.Services.AddValidation();
 
 var app = builder.Build();
 
+app.UseMiddleware<NexusMonitor.Api.Middleware.ExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

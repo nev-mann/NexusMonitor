@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NexusMonitor.Api.Dtos
+namespace NexusMonitor.Api.Models
 {
     public record RegisterUserDto(
         [Required][EmailAddress] string Email,
