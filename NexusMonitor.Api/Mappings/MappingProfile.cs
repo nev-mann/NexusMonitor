@@ -14,10 +14,13 @@ namespace NexusMonitor.Api.Mappings
 
             CreateMap<CreateMeasurementDto, Measurement>();
             CreateMap<Measurement, CreateMeasurementDto>();
+            CreateMap<Measurement, MeasurementDto>();
 
             CreateMap<RegisterUserDto, UserAccount>();
 
             CreateMap<UpdateDeviceDto, Device>();
+
+            CreateMap<Device, DeviceDto>();
         }
     }
 }

@@ -18,7 +18,7 @@ Accept: application/json
 POST {{NexusMonitor.Api_HostAddress}}/api/device
 Content-Type: application/json
 {
-  "DeviceName": "Nowe3",
+  "DeviceName": "ter",
   "HighThreshold": 123.12,
   "DeviceType":"asd"
 }

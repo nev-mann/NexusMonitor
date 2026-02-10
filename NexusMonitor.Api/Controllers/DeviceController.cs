@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; // To daje dostęp do ToListAsync, FindAsync itd.
 using NexusMonitor.Api.Data;  // To daje dostęp do AppDbContext
-using NexusMonitor.Api.Dtos;       
+using NexusMonitor.Api.Dtos;     
 
 namespace NexusMonitor.Api.Controllers
 {
@@ -32,15 +32,23 @@ namespace NexusMonitor.Api.Controllers
 
         // /api/device/1
         [HttpGet("{deviceId}")]
-        public async Task<ActionResult<Device>> GetById(int deviceId)
-        {
+        public async Task<ActionResult<DeviceDto>> GetById(int deviceId)
+        {            
             var device = await _context.Devices.FindAsync(deviceId);
-            return device == null ? NotFound() : Ok(device);
+
+            if (device == null)
+            {
+                return NotFound();
+            }
+
+            var deviceDto = _mapper.Map<DeviceDto>(device);
+
+            return Ok(deviceDto);
         }
 
         // /api/device?DeviceName=Device%201  lub  /api/device/
         [HttpGet]
-        public async Task<ActionResult> GetAllOrByName ([FromQuery] string? deviceName)
+        public async Task<ActionResult<IEnumerable<DeviceDto>>> GetAllOrByName ([FromQuery] string? deviceName)
         {
             var query = _context.Devices.AsQueryable();
 
@@ -51,7 +59,14 @@ namespace NexusMonitor.Api.Controllers
 
             var devices = await query.ToListAsync();
 
-            return devices == null ? NotFound() : Ok(devices);
+            if (devices == null || devices.Count == 0)
+            {
+                return NotFound();
+            }
+
+            var devicesDto = _mapper.Map<List<DeviceDto>>(devices); 
+
+            return Ok(devicesDto);
         }
 
         // 
@@ -67,7 +82,7 @@ namespace NexusMonitor.Api.Controllers
 
             // Zwrócenie kodu 201 Created wraz z nagłówkiem Location
             // nameof(GetById) wskazuje na metodę, która pozwala pobrać ten konkretny zasób
-            return CreatedAtAction(nameof(GetById), new { deviceId = device.DeviceId }, device);
+            return CreatedAtAction(nameof(GetById), new { deviceId = device.DeviceId }, deviceDto);
         }
 
         public static string RandomString(int length)
