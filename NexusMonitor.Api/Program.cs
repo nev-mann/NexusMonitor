@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NexusMonitor.Api.Data;
 
@@ -6,8 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Rejestracja FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters(); // Opcjonalne (dla frontendu)
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Rejestracja AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));

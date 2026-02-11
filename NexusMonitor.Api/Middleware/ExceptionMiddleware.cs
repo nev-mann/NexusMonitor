@@ -3,29 +3,20 @@ using System.Net;
 
 namespace NexusMonitor.Api.Middleware
 {
-    public class ExceptionMiddleware
+    public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
-        private readonly IHostEnvironment _env;
-
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
-        {
-            _next = next;
-            _logger = logger;
-            _env = env; // Pozwala sprawdzić, czy jesteśmy w Development czy Production
-        }
+        private readonly RequestDelegate _next = next;
+        private readonly ILogger<ExceptionMiddleware> _logger = logger;
+        private readonly IHostEnvironment _env = env;
 
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                // Przekazujemy żądanie dalej do kolejnych middleware'ów (np. do Kontrolera)
                 await _next(context);
             }
             catch (Exception ex)
             {
-                // Jeśli gdziekolwiek "głębiej" wystąpi błąd, łapiemy go tutaj
                 _logger.LogError(ex, "Wystąpił nieoczekiwany błąd: {Message}", ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
@@ -47,7 +38,7 @@ namespace NexusMonitor.Api.Middleware
                 {
                     StatusCode = context.Response.StatusCode,
                     Message = "Wystąpił błąd wewnętrzny serwera. Spróbuj ponownie później.",
-                    Details = null
+                    Details = string.Empty
                 };
 
             await context.Response.WriteAsync(response.ToString());

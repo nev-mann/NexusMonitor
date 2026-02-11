@@ -5,7 +5,7 @@ Accept: application/json
 
 ### GET, argument jako liczba (int), 
 
-GET {{NexusMonitor.Api_HostAddress}}/api/device/2
+GET {{NexusMonitor.Api_HostAddress}}/api/device/3002
 Accept: application/json
 
 ### GET, argument jako tekst 
@@ -18,18 +18,16 @@ Accept: application/json
 POST {{NexusMonitor.Api_HostAddress}}/api/device
 Content-Type: application/json
 {
-  "DeviceName": "ter",
-  "HighThreshold": 123.12,
-  "DeviceType":"asd"
+  "DeviceName": "Test walidators"
 }
 
 ### Zaktualizuj (PUT)
-PUT {{NexusMonitor.Api_HostAddress}}/api/device/2
+PUT {{NexusMonitor.Api_HostAddress}}/api/device/3002
 Content-Type: application/json
 {
-  "DeviceName": "TestMapping",
+  "DeviceName": "Walidator test 2",
   "HighThreshold": 123.12,
-  "DeviceType":"asd"
+  "DeviceType":"Mircowave"
 }
 
 ### Usuñ (DELETE)
