@@ -31,8 +31,9 @@ namespace NexusMonitor.Api.Middleware
                 ? new ErrorDetails
                 {
                     StatusCode = context.Response.StatusCode,
-                    Message = ex.Message,
-                    Details = ex.StackTrace?.ToString()
+                    Message = "Middleware: " + ex.Message,
+                    Details = ex.StackTrace?.ToString(),
+
                 }
                 : new ErrorDetails
                 {
