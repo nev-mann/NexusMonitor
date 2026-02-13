@@ -5,6 +5,16 @@ using NexusMonitor.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS Policy to allow requests from the React app running on Vite
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy.WithOrigins("http://localhost:5173")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -27,6 +37,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddValidation();
 
 var app = builder.Build();
+
+app.UseCors("AllowReactApp");
 
 app.UseMiddleware<NexusMonitor.Api.Middleware.ExceptionMiddleware>();
 
