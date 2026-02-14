@@ -36,6 +36,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddValidation();
 
+
+builder.Services.AddEndpointsApiExplorer();
+
 var app = builder.Build();
 
 app.UseCors("AllowReactApp");

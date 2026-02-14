@@ -27,7 +27,8 @@ Content-Type: application/json
 {
   "DeviceName": "Record DTO",
   "HighThreshold": 123.12,
-  "DeviceType":"Mircowave"
+  "DeviceType":"Mircowave",
+  "MeasurementsUnit":"km/h"
 }
 
 ### Usuñ (DELETE)
