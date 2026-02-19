@@ -1,0 +1,12 @@
+@NexusMonitor.Api_HostAddress = http://localhost:5210
+
+GET {{NexusMonitor.Api_HostAddress}}/api/device/3004/measurements
+Accept: application/json
+
+### Dodaj (POST)
+POST {{NexusMonitor.Api_HostAddress}}/api/device/3004/measurements
+Content-Type: application/json
+{
+  "DeviceId": "3004",
+  "Value": 123.45
+}
