@@ -22,14 +22,6 @@ namespace NexusMonitor.Api.Controllers
             _mapper = mapper;
         }
 
-        // Tymczasowa lista urządzeń, zastąpić później bazą danych
-        private static readonly List<Device> _devices = new()
-        {
-            new Device { DeviceId = 1, DeviceName = "Device 1", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
-            new Device { DeviceId = 2, DeviceName = "Device 2", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) },
-            new Device { DeviceId = 3, DeviceName = "Device 3", DateRegistered = DateOnly.FromDateTime(DateTime.UtcNow) }
-        };
-
         // /api/device/1
         [HttpGet("{deviceId}")]
         public async Task<ActionResult<DeviceDto>> GetById(int deviceId)
@@ -68,8 +60,6 @@ namespace NexusMonitor.Api.Controllers
 
             return Ok(devicesDto);
         }
-
-        // 
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateDeviceDto deviceDto)
