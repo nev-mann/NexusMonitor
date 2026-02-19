@@ -3,6 +3,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Users from "./Users";
 import Devices from "./Devices";
+import Device from "./Device";
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
             <Routes>
                 <Route path="/users" element={<Users />} />
                 <Route path="/devices" element={<Devices />} />
+                <Route path="/devices/:deviceId" element={<Device />} />
             </Routes>
         </BrowserRouter>
     )

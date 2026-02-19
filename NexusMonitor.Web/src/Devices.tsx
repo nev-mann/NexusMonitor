@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 function Devices() {
     interface Device {
         deviceId: number;
@@ -14,7 +15,6 @@ function Devices() {
     const [devices, setData] = useState<Device[]>([]);
     const [error, setError] = useState(null);    
 
-
     useEffect(() => {
         fetch('/api/device/')
             .then(response => response.json())
@@ -28,7 +28,8 @@ function Devices() {
     }, []);
 
     return (
-        <div className="card">
+            <div className="card">
+
             {error && <p>Error: {error}</p>}
             {!error && (
                 <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
@@ -48,7 +49,7 @@ function Devices() {
                             {devices.map((device) => (
                                 <tr key={device.deviceId} style={{ borderBottom: '1px solid #ddd' }}>
                                     <td>{device.deviceId}</td>
-                                    <td>**{device.deviceName}**</td>
+                                    <td><Link to={`/devices/${device.deviceId}`}>**{device.deviceName}**</Link></td>
                                     <td>{device.deviceType}</td>
                                     <td>{device.dateRegistered}</td>
                                     <td>
@@ -64,7 +65,8 @@ function Devices() {
                     </table>
                 </div>
             )}
-        </div>
+            </div>
+
     )
 };
 
