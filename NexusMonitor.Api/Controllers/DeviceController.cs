@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore; // To daje dostęp do ToListAsync, FindAsync itd.
 using NexusMonitor.Api.Data;  // To daje dostęp do AppDbContext
 using NexusMonitor.Api.Models;
+using System;
 
 namespace NexusMonitor.Api.Controllers
 {
@@ -62,8 +65,18 @@ namespace NexusMonitor.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateDeviceDto deviceDto)
+        public async Task<IActionResult> Create([FromBody] CreateDeviceDto deviceDto, IValidator<CreateDeviceDto> validator)
         {
+            // Validation
+            var result = await validator.ValidateAsync(deviceDto);
+
+            if (!result.IsValid)
+            {
+                return ValidationProblem(new ValidationProblemDetails(result.ToDictionary()));
+            }
+
+            //
+
             var device = _mapper.Map<Device>(deviceDto);
 
             _context.Devices.Add(device);
@@ -83,8 +96,18 @@ namespace NexusMonitor.Api.Controllers
         }
 
         [HttpPut("{deviceId}")]
-        public async Task<IActionResult> Update(int deviceId, [FromBody] UpdateDeviceDto updatedDeviceDto)
+        public async Task<IActionResult> Update(int deviceId, [FromBody] UpdateDeviceDto updatedDeviceDto, IValidator<UpdateDeviceDto> validator)
         {
+            // Validation
+            var result = await validator.ValidateAsync(updatedDeviceDto);
+
+            if (!result.IsValid)
+            {
+                return ValidationProblem(new ValidationProblemDetails(result.ToDictionary()));
+            }
+
+            //
+
             var existingDevice = await _context.Devices.FindAsync(deviceId);
 
             if (existingDevice == null)

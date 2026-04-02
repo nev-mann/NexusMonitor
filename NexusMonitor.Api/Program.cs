@@ -1,5 +1,4 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NexusMonitor.Api.Data;
 
@@ -23,12 +22,10 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 // Rejestracja FluentValidation
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters(); // Opcjonalne (dla frontendu)
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Rejestracja AutoMapper
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 
 // Obs³uga bazy danych
 builder.Services.AddDbContext<AppDbContext>(options =>

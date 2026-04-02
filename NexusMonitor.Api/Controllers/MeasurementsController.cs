@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NexusMonitor.Api.Data;
 using NexusMonitor.Api.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace NexusMonitor.Api.Controllers
 {
@@ -29,8 +31,18 @@ namespace NexusMonitor.Api.Controllers
             return Ok(measurementDtos);
         }
         [HttpPost]
-        public async Task<ActionResult<MeasurementDto>> CreateMeasurementForDevice(int deviceId, [FromBody] CreateMeasurementDto createMeasurementDto)
+        public async Task<ActionResult<MeasurementDto>> CreateMeasurementForDevice(int deviceId, [FromBody] CreateMeasurementDto createMeasurementDto, IValidator<CreateMeasurementDto> validator)
         {
+            // Validation
+            var result = await validator.ValidateAsync(createMeasurementDto);
+
+            if (!result.IsValid)
+            {
+                return ValidationProblem(new ValidationProblemDetails(result.ToDictionary()));
+            }
+
+            //
+
             var device = await _context.Devices.FindAsync(deviceId);
             if (device == null)
             {
