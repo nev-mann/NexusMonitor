@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="NexusMonitor.Api/NexusMonitor.Api.csproj" />
-  <Project Path="NexusMonitor.Web/nexusmonitor.web.esproj" DisplayName="NexusMonitor.Web">
+  <Project Path="NexusMonitor.Web/nexusmonitor.web.esproj">
+    <BuildDependency Project="NexusMonitor.Api/NexusMonitor.Api.csproj" />
     <Build />
     <Deploy />
   </Project>

@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Devices.module.css'; 
+
 function Devices() {
     interface Device {
         deviceId: number;
@@ -13,62 +15,99 @@ function Devices() {
     }
 
     const [devices, setData] = useState<Device[]>([]);
-    const [error, setError] = useState(null);    
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch('/api/device/')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(json => {
                 setData(json);
+                setIsLoading(false);
             })
             .catch(error => {
-                console.error('B³¹d:', error);
+                console.error('Error fetching devices:', error);
                 setError(error.message);
+                setIsLoading(false);
             });
     }, []);
 
     return (
-            <div className="card">
+        <div className={styles.container}>
+            <div className={styles.card}>
+                <h2 className={styles.header}>Device Registry</h2>
 
-            {error && <p>Error: {error}</p>}
-            {!error && (
-                <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-                    <h2>Device Registry</h2>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                {error && (
+                    <div className={styles.error}>
+                        <strong>Error loading devices:</strong> {error}
+                    </div>
+                )}
+
+                {!error && isLoading && (
+                    <div className={styles.message}>Loading devices...</div>
+                )}
+
+                {!error && !isLoading && devices.length === 0 && (
+                    <div className={styles.message}>No devices found.</div>
+                )}
+
+                {!error && !isLoading && devices.length > 0 && (
+                    <table className={styles.table}>
                         <thead>
-                            <tr style={{ textAlign: 'left' }}>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Date Registered</th>
-                                <th>Thresholds (H/L)</th>
-                                <th>Unit</th>
+                            <tr>
+                                <th className={styles.th}>ID</th>
+                                <th className={styles.th}>Name</th>
+                                <th className={styles.th}>Type</th>
+                                <th className={styles.th}>Date Registered</th>
+                                <th className={styles.th}>Thresholds (H/L)</th>
+                                <th className={styles.th}>Unit</th>
                             </tr>
                         </thead>
                         <tbody>
                             {devices.map((device) => (
-                                <tr key={device.deviceId} style={{ borderBottom: '1px solid #ddd' }}>
-                                    <td>{device.deviceId}</td>
-                                    <td><Link to={`/devices/${device.deviceId}`}>**{device.deviceName}**</Link></td>
-                                    <td>{device.deviceType}</td>
-                                    <td>{device.dateRegistered}</td>
-                                    <td>
-                                        {device.highThreshold} / {device.lowThreshold}
+                                <tr key={device.deviceId}>
+                                    <td className={styles.td}>
+                                        <span className={styles.textMuted}>#{device.deviceId}</span>
                                     </td>
-                                    <td>
-                                        {device.measurementsUnit || <i style={{ color: '#999' }}>N/A</i>}
+                                    <td className={styles.tdBold}>
+                                        <Link to={`/devices/${device.deviceId}`} className={styles.link}>
+                                            {device.deviceName}
+                                        </Link>
+                                    </td>
+                                    <td className={styles.td}>
+                                        <span className={styles.badge}>{device.deviceType}</span>
+                                    </td>
+                                    <td className={styles.td}>
+                                        {new Date(device.dateRegistered).toLocaleDateString()}
+                                    </td>
+                                    <td className={styles.td}>
+                                        <span className={styles.textRed}>{device.highThreshold}</span>
+                                        <span className={styles.slash}>/</span>
+                                        <span className={styles.textBlue}>{device.lowThreshold}</span>
+                                    </td>
+                                    <td className={styles.td}>
+                                        {device.measurementsUnit ? (
+                                            <span className={styles.unitBadge}>
+                                                {device.measurementsUnit}
+                                            </span>
+                                        ) : (
+                                            <i className={styles.textMuted}>N/A</i>
+                                        )}
                                     </td>
                                 </tr>
-                            ))
-                            }
+                            ))}
                         </tbody>
                     </table>
-                </div>
-            )}
+                )}
             </div>
+        </div>
+    );
+}
 
-    )
-};
-
-
-export default Devices
+export default Devices;
