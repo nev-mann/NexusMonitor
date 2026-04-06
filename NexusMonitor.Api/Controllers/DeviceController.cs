@@ -30,6 +30,10 @@ namespace NexusMonitor.Api.Controllers
         public async Task<ActionResult<DeviceDto>> GetById(int deviceId)
         {            
             var device = await _context.Devices.FindAsync(deviceId);
+            /* If we want to include measurements in the response
+                .Include(d => d.Measurements)
+                .FirstOrDefaultAsync(d => d.DeviceId == deviceId);
+            */
 
             if (device == null)
             {

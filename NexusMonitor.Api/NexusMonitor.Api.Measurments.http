@@ -6,7 +6,7 @@ Accept: application/json
 ### Dodaj (POST)
 POST {{NexusMonitor.Api_HostAddress}}/api/device/3004/measurements
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOi
 {
-  "DeviceId": "3004",
   "Value": 123.45
 }
